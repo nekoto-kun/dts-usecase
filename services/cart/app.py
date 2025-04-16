@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_restful import Api
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import logging
@@ -19,6 +20,9 @@ logger = logging.getLogger(__name__)
 def create_app():
     # Create Flask application
     app = Flask(__name__)
+    
+    # Enable CORS for all routes
+    CORS(app)
     
     # Configure database with absolute path
     base_dir = os.path.abspath(os.path.dirname(__file__))
