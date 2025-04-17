@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine as build
+FROM node:23.11-alpine as build
 
 WORKDIR /app
 
@@ -27,5 +27,9 @@ COPY Caddyfile /etc/caddy/Caddyfile
 # Expose port
 EXPOSE 80
 EXPOSE 443
+
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:80/ || exit 1
 
 # Caddy will start automatically using the provided Caddyfile
