@@ -123,9 +123,9 @@ const OrderDetail = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-3 text-sm text-gray-500">${item.price.toFixed(2)}</td>
+                    <td className="px-3 py-3 text-sm text-gray-500">Rp {item.price.toLocaleString('id-ID')}</td>
                     <td className="px-3 py-3 text-sm text-gray-500">{item.quantity}</td>
-                    <td className="px-3 py-3 text-sm font-medium">${(item.price * item.quantity).toFixed(2)}</td>
+                    <td className="px-3 py-3 text-sm font-medium">Rp {(item.price * item.quantity).toLocaleString('id-ID')}</td>
                   </tr>
                 ))}
               </tbody>
@@ -188,7 +188,7 @@ const OrderDetail = () => {
             )}
           </div>
           <div className="text-xl font-bold">
-            Total: ${order.total_amount.toFixed(2)}
+            Total: Rp {order.total_amount.toLocaleString('id-ID')}
           </div>
         </div>
       </div>

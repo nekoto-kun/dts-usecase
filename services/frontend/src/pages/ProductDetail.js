@@ -133,7 +133,7 @@ const ProductDetail = ({ userId, cartId, setCartId }) => {
             <div className="flex justify-between items-start">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">{product.name}</h1>
-                <p className="text-xl text-blue-600 font-semibold mt-2">${product.price.toFixed(2)}</p>
+                <p className="text-xl text-blue-600 font-semibold mt-2">Rp {product.price.toLocaleString('id-ID')}</p>
               </div>
 
               <div className="bg-gray-100 py-1 px-3 rounded">
@@ -173,8 +173,8 @@ const ProductDetail = ({ userId, cartId, setCartId }) => {
                     onClick={handleAddToCart}
                     disabled={addingToCart}
                     className={`mt-6 w-full md:w-auto py-2 px-6 rounded-md text-white ${addingToCart
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700'
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700'
                       }`}
                   >
                     {addingToCart ? 'Adding...' : 'Add to Cart'}

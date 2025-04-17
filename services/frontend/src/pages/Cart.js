@@ -179,7 +179,7 @@ const Cart = ({ userId, cartId }) => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${item.price.toFixed(2)}
+                    Rp {item.price.toLocaleString('id-ID')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -200,7 +200,7 @@ const Cart = ({ userId, cartId }) => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    Rp {(item.price * item.quantity).toLocaleString('id-ID')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
@@ -219,7 +219,7 @@ const Cart = ({ userId, cartId }) => {
         <div className="bg-gray-50 px-6 py-4">
           <div className="text-right">
             <p className="text-xl font-semibold text-gray-900">
-              Total: ${cart.total_price.toFixed(2)}
+              Total: Rp {cart.total_price.toLocaleString('id-ID')}
             </p>
           </div>
           <div className="mt-4 flex justify-between">

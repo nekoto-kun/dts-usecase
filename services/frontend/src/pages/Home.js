@@ -96,7 +96,7 @@ const Home = ({ userId, cartId, setCartId }) => {
               <div className="p-4">
                 <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
                 <p className="text-gray-600 text-sm mb-2 line-clamp-2">{product.description || 'No description available'}</p>
-                <p className="text-lg font-bold text-blue-600 mb-3">${product.price.toFixed(2)}</p>
+                <p className="text-lg font-bold text-blue-600 mb-3">Rp {product.price.toLocaleString('id-ID')}</p>
                 <p className="text-sm text-gray-500 mb-4">In stock: {product.stock}</p>
 
                 <div className="flex space-x-2">
@@ -110,8 +110,8 @@ const Home = ({ userId, cartId, setCartId }) => {
                     onClick={() => handleAddToCart(product)}
                     disabled={product.stock < 1}
                     className={`flex-1 py-2 px-4 rounded text-center ${product.stock > 0
-                        ? 'bg-green-500 hover:bg-green-600 text-white'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      ? 'bg-green-500 hover:bg-green-600 text-white'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                       }`}
                   >
                     {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}

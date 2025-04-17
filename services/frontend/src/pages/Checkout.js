@@ -119,16 +119,16 @@ const Checkout = ({ userId, cartId, setCartId }) => {
               <div key={item.id} className="flex justify-between items-center py-3 border-b">
                 <div>
                   <p className="font-medium">{item.product_name}</p>
-                  <p className="text-gray-600 text-sm">${item.price.toFixed(2)} x {item.quantity}</p>
+                  <p className="text-gray-600 text-sm">Rp {item.price.toLocaleString('id-ID')} x {item.quantity}</p>
                 </div>
-                <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                <p className="font-semibold">Rp {(item.price * item.quantity).toLocaleString('id-ID')}</p>
               </div>
             ))}
 
             <div className="mt-4 pt-2 border-t">
               <div className="flex justify-between items-center">
                 <p className="font-semibold">Total:</p>
-                <p className="font-bold text-xl text-blue-600">${cart?.total_price.toFixed(2)}</p>
+                <p className="font-bold text-xl text-blue-600">Rp {cart?.total_price.toLocaleString('id-ID')}</p>
               </div>
             </div>
           </div>
@@ -174,8 +174,8 @@ const Checkout = ({ userId, cartId, setCartId }) => {
               type="submit"
               disabled={isSubmitting}
               className={`w-full py-2 px-4 rounded text-white ${isSubmitting
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-green-500 hover:bg-green-600'
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-500 hover:bg-green-600'
                 }`}
             >
               {isSubmitting ? 'Processing...' : 'Place Order'}

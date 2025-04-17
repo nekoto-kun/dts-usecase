@@ -186,7 +186,7 @@ const ProductManager = () => {
               </div>
               <div className="mb-4">
                 <label htmlFor="price" className="block text-gray-700 font-medium mb-2">
-                  Price ($) *
+                  Price (Rp) *
                 </label>
                 <input
                   type="number"
@@ -302,12 +302,12 @@ const ProductManager = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${product.price.toFixed(2)}
+                        Rp {product.price.toLocaleString('id-ID')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${product.stock > 0
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
                           }`}>
                           {product.stock}
                         </span>

@@ -108,7 +108,7 @@ const OrderList = ({ userId }) => {
                         {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
                       </p>
                       <p className="text-sm font-medium text-gray-900 mt-1">
-                        Total: ${order.total_amount.toFixed(2)}
+                        Total: Rp {order.total_amount.toLocaleString('id-ID')}
                       </p>
                     </div>
                   </div>
@@ -124,8 +124,8 @@ const OrderList = ({ userId }) => {
                 onClick={() => handlePageChange(page - 1)}
                 disabled={page === 1}
                 className={`py-2 px-4 rounded ${page === 1
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
                   }`}
               >
                 Previous
@@ -137,8 +137,8 @@ const OrderList = ({ userId }) => {
                 onClick={() => handlePageChange(page + 1)}
                 disabled={page === totalPages}
                 className={`py-2 px-4 rounded ${page === totalPages
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                  ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
                   }`}
               >
                 Next
