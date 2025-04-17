@@ -31,7 +31,9 @@ export const catalogService = {
   // Create a new product
   createProduct: async (product) => {
     try {
-      const response = await catalogApi.post(API_ENDPOINTS.CATALOG.PRODUCTS, product);
+      // Remove id property when creating a new product
+      const { id, ...productWithoutId } = product;
+      const response = await catalogApi.post(API_ENDPOINTS.CATALOG.PRODUCTS, productWithoutId);
       return response.data;
     } catch (error) {
       console.error('Error creating product:', error);
@@ -42,7 +44,27 @@ export const catalogService = {
   // Update an existing product
   updateProduct: async (productId, product) => {
     try {
-      const response = await catalogApi.put(API_ENDPOINTS.CATALOG.PRODUCT_BY_ID(productId), product);
+      // Extract only the required properties for update
+      const {
+        name,
+        description,
+        price,
+        stock,
+        image_url
+      } = product;
+
+      const productToUpdate = {
+        name,
+        description: description || '',
+        price: Number(price),
+        stock: Number(stock),
+        image_url: image_url || ''
+      };
+
+      const response = await catalogApi.put(
+        API_ENDPOINTS.CATALOG.PRODUCT_BY_ID(productId),
+        productToUpdate
+      );
       return response.data;
     } catch (error) {
       console.error(`Error updating product ${productId}:`, error);

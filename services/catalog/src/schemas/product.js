@@ -8,7 +8,17 @@ const productSchema = Joi.object({
   description: Joi.string().allow('', null),
   price: Joi.number().precision(2).positive().required(),
   stock: Joi.number().integer().min(0).required(),
-  image_url: Joi.string().uri().allow('', null)
+  image_url: Joi.string().allow('', null).custom((value, helpers) => {
+    // If value is not empty, validate it as a URI
+    if (value && value.trim() !== '') {
+      // Simple URL validation regex
+      const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+      if (!urlRegex.test(value)) {
+        return helpers.error('string.uri');
+      }
+    }
+    return value;
+  }, 'URI validation')
 });
 
 // Schema for ID parameter
@@ -19,3 +29,4 @@ const idSchema = Joi.object({
 export {
   idSchema, productSchema
 };
+
