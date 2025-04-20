@@ -116,6 +116,64 @@ docker build -t order-service ./services/order
 docker build -t frontend ./services/frontend
 ```
 
+## Azure Kubernetes Service (AKS) Deployment
+
+To deploy this application to Azure Kubernetes Service (AKS), follow these steps:
+
+### Prerequisites
+
+- Azure CLI installed and configured
+- PowerShell
+- kubectl command-line tool
+- Docker installed and running
+
+### Deployment Steps
+
+1. **Build and Push Container Images to Azure Container Registry**
+
+   Run the build and push script:
+   ```powershell
+   .\build-and-push-images.ps1
+   ```
+   
+   This script will:
+   - Prompt for your ACR name, resource group, and image tag version
+   - Verify your Azure login status
+   - Build all service images
+   - Push the images to your Azure Container Registry
+
+2. **Create an AKS Cluster**
+
+   Run the cluster creation script:
+   ```powershell
+   .\create-aks-cluster.ps1
+   ```
+   
+   This script will create a new AKS cluster in your specified resource group and configure it for your application.
+
+3. **Deploy Services to AKS**
+
+   Apply all Kubernetes manifests:
+   ```powershell
+   kubectl apply -f .\k8s
+   ```
+   
+   This will deploy all microservices to your AKS cluster with proper configurations.
+
+4. **Access the Application**
+
+   After deployment completes, you can find the public IP addresses for your services:
+   ```powershell
+   kubectl get svc -n e-shop
+   ```
+
+5. **Clean Up Resources**
+
+   When you're done with the demo, delete the AKS cluster to avoid unnecessary charges:
+   ```powershell
+   .\delete-aks-cluster.ps1
+   ```
+
 ## Future Enhancements
 
 1. Add authentication/authorization
