@@ -148,39 +148,52 @@ To deploy this application to Azure Kubernetes Service (AKS), follow these steps
    ```powershell
    .\create-aks-cluster.ps1
    ```
-   
-   This script will create a new AKS cluster in your specified resource group and configure it for your application.
 
-3. **Deploy Services to AKS**
+   This script will create a new AKS cluster in your specified resource group and configure it for your application. Don't forget to get the AKS credentials after creation:
+   ```powershell
+   az aks get-credentials --resource-group <your-resource-group> --name <your-cluster-name>
+   ```
+   This will set up your local kubectl context to point to the new AKS cluster.
+
+3. **Install Nginx Ingress Controller**
+
+   Install the NGINX Ingress Controller using Helm (make sure you have Helm installed):
+   ```powershell
+   helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+   helm repo update
+   helm install nginx-ingress ingress-nginx/ingress-nginx
+   ```
+
+4. **Deploy Services to AKS**
 
    Apply all Kubernetes manifests:
    ```powershell
    kubectl apply -f .\k8s
    ```
-   
+
    This will deploy all microservices to your AKS cluster with proper configurations.
 
-4. **Access the Application**
+5. **Access the Application**
 
    After deployment completes, you can find the public IP addresses for your services:
    ```powershell
-   kubectl get svc -n e-shop
+   kubectl get svc
    ```
 
-5. **Clean Up Resources**
+6. **Clean Up Resources**
 
    When you're done with the demo, you can clean up the resources:
-   
+
    Delete the AKS cluster:
    ```powershell
    .\delete-aks-cluster.ps1
    ```
-   
+
    Delete the Azure Container Registry:
    ```powershell
    .\delete-acr.ps1
    ```
-   
+
    The scripts will prompt for confirmation and display resource details before deletion.
 
 ## Future Enhancements
