@@ -81,7 +81,7 @@ const Home = ({ userId, cartId, setCartId }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map(product => (
             <div key={product.id} className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
+              <div className="h-48 bg-gray-200 flex items-center justify-center relative">
                 {product.image_url ? (
                   <img
                     src={product.image_url}
@@ -91,13 +91,26 @@ const Home = ({ userId, cartId, setCartId }) => {
                 ) : (
                   <div className="text-gray-400">No image</div>
                 )}
+
+                {/* Out of stock badge */}
+                {product.stock <= 0 && (
+                  <div className="absolute top-0 right-0 bg-red-500 text-white py-1 px-3 m-2 rounded-full text-xs font-bold">
+                    Out of Stock
+                  </div>
+                )}
               </div>
 
               <div className="p-4">
                 <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
                 <p className="text-gray-600 text-sm mb-2 line-clamp-2">{product.description || 'No description available'}</p>
                 <p className="text-lg font-bold text-blue-600 mb-3">Rp {product.price.toLocaleString('id-ID')}</p>
-                <p className="text-sm text-gray-500 mb-4">In stock: {product.stock}</p>
+                <p className="text-sm text-gray-500 mb-4">
+                  {product.stock > 0 ? (
+                    <>In stock: <span className="font-medium">{product.stock}</span></>
+                  ) : (
+                    <span className="text-red-500 font-medium">Out of stock</span>
+                  )}
+                </p>
 
                 <div className="flex space-x-2">
                   <Link
@@ -108,7 +121,7 @@ const Home = ({ userId, cartId, setCartId }) => {
                   </Link>
                   <button
                     onClick={() => handleAddToCart(product)}
-                    disabled={product.stock < 1}
+                    disabled={product.stock <= 0}
                     className={`flex-1 py-2 px-4 rounded text-center ${product.stock > 0
                       ? 'bg-green-500 hover:bg-green-600 text-white'
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'

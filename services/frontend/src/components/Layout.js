@@ -1,9 +1,18 @@
-import { ShoppingCartIcon } from '@heroicons/react/24/outline';
-import React from 'react';
+import { Bars3Icon, ShoppingCartIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const Layout = ({ cartId }) => {
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -39,17 +48,80 @@ const Layout = ({ cartId }) => {
                 </Link>
               </nav>
             </div>
-            {cartId && (
-              <Link
-                to="/cart"
-                className="flex items-center space-x-1 hover:text-blue-200"
+            <div className="flex items-center space-x-4">
+              {cartId && (
+                <Link
+                  to="/cart"
+                  className="flex items-center space-x-1 hover:text-blue-200"
+                  onClick={closeMobileMenu}
+                >
+                  <ShoppingCartIcon className="h-6 w-6" />
+                  <span>Cart</span>
+                </Link>
+              )}
+
+              {/* Mobile menu button */}
+              <button
+                className="md:hidden text-white focus:outline-none"
+                onClick={toggleMobileMenu}
+                aria-label="Toggle menu"
               >
-                <ShoppingCartIcon className="h-6 w-6" />
-                <span>Cart</span>
-              </Link>
-            )}
+                {mobileMenuOpen ? (
+                  <XMarkIcon className="h-6 w-6" />
+                ) : (
+                  <Bars3Icon className="h-6 w-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Mobile drawer menu */}
+        <div
+          className={`md:hidden fixed inset-0 z-50 bg-blue-700 transform transition-transform duration-300 ease-in-out ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          style={{ top: '69px' }}
+        >
+          <div className="flex flex-col px-4 py-6 space-y-4">
+            <Link
+              to="/"
+              className={`text-lg hover:text-blue-200 ${location.pathname === '/' ? 'font-semibold' : ''}`}
+              onClick={closeMobileMenu}
+            >
+              Products
+            </Link>
+            <Link
+              to="/manage-products"
+              className={`text-lg hover:text-blue-200 ${location.pathname === '/manage-products' ? 'font-semibold' : ''}`}
+              onClick={closeMobileMenu}
+            >
+              Manage Products
+            </Link>
+            <Link
+              to="/orders"
+              className={`text-lg hover:text-blue-200 ${location.pathname === '/orders' ? 'font-semibold' : ''}`}
+              onClick={closeMobileMenu}
+            >
+              Orders
+            </Link>
+            <Link
+              to="/system-status"
+              className={`text-lg hover:text-blue-200 ${location.pathname === '/system-status' ? 'font-semibold' : ''}`}
+              onClick={closeMobileMenu}
+            >
+              System Status
+            </Link>
+          </div>
+        </div>
+
+        {/* Backdrop for mobile menu */}
+        {mobileMenuOpen && (
+          <div
+            className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            style={{ top: '69px' }}
+            onClick={closeMobileMenu}
+          ></div>
+        )}
       </header>
 
       <main className="container mx-auto px-4 py-6 flex-grow">

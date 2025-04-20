@@ -11,6 +11,7 @@ const Checkout = ({ userId, cartId, setCartId }) => {
   const [shippingAddress, setShippingAddress] = useState('');
   const [paymentInfo, setPaymentInfo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [stockErrors, setStockErrors] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,6 +54,7 @@ const Checkout = ({ userId, cartId, setCartId }) => {
 
     try {
       setIsSubmitting(true);
+      setStockErrors([]);
 
       // Create order items from cart items
       const items = cart.items.map(item => ({
@@ -70,20 +72,31 @@ const Checkout = ({ userId, cartId, setCartId }) => {
         payment_info: paymentInfo || null
       };
 
-      const response = await orderService.createOrder(orderData);
+      try {
+        const response = await orderService.createOrder(orderData);
 
-      // Clear cart after successful order
-      await cartService.clearCart(cartId);
+        // Clear cart after successful order
+        await cartService.clearCart(cartId);
 
-      // Reset cart ID to create a new one when adding more products
-      setCartId(null);
-      localStorage.removeItem('cartId');
+        // Reset cart ID to create a new one when adding more products
+        setCartId(null);
+        localStorage.removeItem('cartId');
 
-      toast.success('Order placed successfully!');
-      navigate(`/orders/${response.order.id}`);
-    } catch (err) {
-      console.error('Failed to place order:', err);
-      toast.error('Failed to place order. Please try again later.');
+        toast.success('Order placed successfully!');
+        navigate(`/orders/${response.order.id}`);
+      } catch (err) {
+        // Handle 400 Bad Request which might indicate stock issues
+        if (err.response && err.response.status === 400 && err.response.data.insufficientItems) {
+          setStockErrors(err.response.data.insufficientItems);
+          toast.error('Some products have insufficient stock. Please review your order.');
+          // Scroll to the top to show errors
+          window.scrollTo(0, 0);
+        } else {
+          // Handle other errors
+          console.error('Failed to place order:', err);
+          toast.error('Failed to place order. Please try again later.');
+        }
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -109,6 +122,25 @@ const Checkout = ({ userId, cartId, setCartId }) => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+
+      {/* Stock error display */}
+      {stockErrors.length > 0 && (
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-6">
+          <h3 className="text-lg font-bold mb-2">Insufficient Stock</h3>
+          <p className="mb-2">The following items in your cart have insufficient stock:</p>
+          <ul className="list-disc pl-5 space-y-1">
+            {stockErrors.map((item, index) => (
+              <li key={index}>
+                <span className="font-medium">{item.product_name}</span>: You ordered {item.requested},
+                but only {item.available} {item.available === 1 ? 'item' : 'items'} available
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2">
+            Please adjust the quantities in your cart before placing the order.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>

@@ -115,7 +115,7 @@ const ProductDetail = ({ userId, cartId, setCartId }) => {
 
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <div className="md:flex">
-          <div className="md:flex-shrink-0 md:w-1/3">
+          <div className="md:flex-shrink-0 md:w-1/3 relative">
             {product.image_url ? (
               <img
                 className="w-full h-64 md:h-full object-cover"
@@ -127,6 +127,15 @@ const ProductDetail = ({ userId, cartId, setCartId }) => {
                 <span className="text-gray-500">No image available</span>
               </div>
             )}
+
+            {/* Out of stock overlay */}
+            {product.stock <= 0 && (
+              <div className="absolute top-0 right-0 bottom-0 left-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="bg-red-600 text-white py-2 px-4 rounded-lg text-xl font-bold transform rotate-12">
+                  Out of Stock
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="p-8 md:w-2/3">
@@ -136,7 +145,7 @@ const ProductDetail = ({ userId, cartId, setCartId }) => {
                 <p className="text-xl text-blue-600 font-semibold mt-2">Rp {product.price.toLocaleString('id-ID')}</p>
               </div>
 
-              <div className="bg-gray-100 py-1 px-3 rounded">
+              <div className={`py-1 px-3 rounded ${product.stock > 0 ? 'bg-green-100' : 'bg-red-100'}`}>
                 <span className={`text-sm font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
                 </span>
@@ -150,7 +159,7 @@ const ProductDetail = ({ userId, cartId, setCartId }) => {
               </div>
             )}
 
-            {product.stock > 0 && (
+            {product.stock > 0 ? (
               <div className="mt-6">
                 <div className="flex flex-wrap items-center gap-4">
                   <div>
@@ -180,6 +189,19 @@ const ProductDetail = ({ userId, cartId, setCartId }) => {
                     {addingToCart ? 'Adding...' : 'Add to Cart'}
                   </button>
                 </div>
+              </div>
+            ) : (
+              <div className="mt-6">
+                <div className="p-4 bg-red-50 rounded-md">
+                  <p className="text-red-600">This product is currently out of stock.</p>
+                  <p className="text-gray-600 mt-2">Please check back later or browse our other products.</p>
+                </div>
+                <Link
+                  to="/"
+                  className="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded"
+                >
+                  Browse Products
+                </Link>
               </div>
             )}
           </div>
