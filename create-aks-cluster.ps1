@@ -57,6 +57,19 @@ else {
 $NETWORK_PLUGIN = Read-Host "Enter network plugin (azure or kubenet, default: azure)"
 if ([string]::IsNullOrEmpty($NETWORK_PLUGIN)) { $NETWORK_PLUGIN = "azure" }
 
+# ACR configuration
+$ENABLE_ACR = Read-Host "Attach Azure Container Registry? (y/n, default: y)"
+if ([string]::IsNullOrEmpty($ENABLE_ACR)) { $ENABLE_ACR = "y" }
+
+if ($ENABLE_ACR -eq "y") {
+    $ACR_NAME = Read-Host "Enter Azure Container Registry name (default: dtsusecase2025)"
+    if ([string]::IsNullOrEmpty($ACR_NAME)) { $ACR_NAME = "dtsusecase2025" }
+    $ATTACH_ACR = "--attach-acr $ACR_NAME"
+}
+else {
+    $ATTACH_ACR = ""
+}
+
 # Tags
 $ENV_TAG = Read-Host "Enter environment tag (default: demo)"
 if ([string]::IsNullOrEmpty($ENV_TAG)) { $ENV_TAG = "demo" }
@@ -82,6 +95,12 @@ else {
 }
 
 Write-Host "Network Plugin: $NETWORK_PLUGIN"
+if ($ENABLE_ACR -eq "y") {
+    Write-Host "ACR Integration: Enabled (ACR: $ACR_NAME)"
+}
+else {
+    Write-Host "ACR Integration: Disabled"
+}
 Write-Host "Tags: environment=$ENV_TAG, project=$PROJECT_TAG"
 Write-Host ""
 
@@ -90,10 +109,10 @@ Write-Host "The following command will be used to create the AKS cluster:" -Fore
 Write-Host ""
 
 if ($ENABLE_AUTOSCALER -eq "y") {
-    Write-Host "az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --node-count $NODE_COUNT --node-vm-size $NODE_VM_SIZE --enable-cluster-autoscaler --min-count $MIN_COUNT --max-count $MAX_COUNT --network-plugin $NETWORK_PLUGIN --generate-ssh-keys --location $LOCATION --tags environment=$ENV_TAG project=$PROJECT_TAG" -ForegroundColor Yellow
+    Write-Host "az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --node-count $NODE_COUNT --node-vm-size $NODE_VM_SIZE --enable-cluster-autoscaler --min-count $MIN_COUNT --max-count $MAX_COUNT --network-plugin $NETWORK_PLUGIN --generate-ssh-keys --location $LOCATION $ATTACH_ACR --tags environment=$ENV_TAG project=$PROJECT_TAG" -ForegroundColor Yellow
 }
 else {
-    Write-Host "az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --node-count $NODE_COUNT --node-vm-size $NODE_VM_SIZE --network-plugin $NETWORK_PLUGIN --generate-ssh-keys --location $LOCATION --tags environment=$ENV_TAG project=$PROJECT_TAG" -ForegroundColor Yellow
+    Write-Host "az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --node-count $NODE_COUNT --node-vm-size $NODE_VM_SIZE --network-plugin $NETWORK_PLUGIN --generate-ssh-keys --location $LOCATION $ATTACH_ACR --tags environment=$ENV_TAG project=$PROJECT_TAG" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -115,6 +134,7 @@ if ($EXECUTE -eq "y") {
             "--network-plugin $NETWORK_PLUGIN " +
             "--generate-ssh-keys " +
             "--location $LOCATION " +
+            "$ATTACH_ACR " +
             "--tags environment=$ENV_TAG project=$PROJECT_TAG"
         
         Invoke-Expression $command
@@ -128,6 +148,7 @@ if ($EXECUTE -eq "y") {
             "--network-plugin $NETWORK_PLUGIN " +
             "--generate-ssh-keys " +
             "--location $LOCATION " +
+            "$ATTACH_ACR " +
             "--tags environment=$ENV_TAG project=$PROJECT_TAG"
         
         Invoke-Expression $command
