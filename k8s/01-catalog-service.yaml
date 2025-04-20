@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: catalog-service
-          image: catalog-service:latest
+          image: dtsusecase2025.azurecr.io/catalog-service:latest
           ports:
             - containerPort: 3000
           resources:
@@ -44,6 +44,11 @@ spec:
             - name: NODE_ENV
               value: "production"
             - name: PORT
+              value: "3000"
+            - name: CART_SERVICE_URL
+              value: "http://cart-service"
+            - name: ORDER_SERVICE_URL
+              value: "http://order-service"
 ---
 apiVersion: v1
 kind: Service

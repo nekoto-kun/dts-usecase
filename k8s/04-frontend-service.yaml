@@ -18,7 +18,14 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: frontend-service:latest
+          image: dtsusecase2025.azurecr.io/frontend-service:latest
+          env:
+            - name: REACT_APP_CATALOG_API
+              value: "/catalog"
+            - name: REACT_APP_CART_API
+              value: "/cart"
+            - name: REACT_APP_ORDER_API
+              value: "/order"
           ports:
             - containerPort: 80
           resources:
@@ -36,7 +43,7 @@ spec:
             periodSeconds: 30
           livenessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 80
             initialDelaySeconds: 20
             periodSeconds: 30
@@ -54,4 +61,3 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-  type: ClusterIP
