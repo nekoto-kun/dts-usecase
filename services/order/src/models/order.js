@@ -1,6 +1,7 @@
 'use strict';
 
 import { v4 as uuidv4 } from 'uuid';
+import { restoreProductStock, updateProductStock } from '../catalog-api.js';
 import * as db from '../database.js';
 
 class OrderModel {
@@ -169,17 +170,68 @@ class OrderModel {
         throw new Error(`Invalid status: ${status}`);
       }
 
+      // Get current order to check previous status
+      const currentOrder = await this.getOrderById(id);
+      if (!currentOrder) {
+        return null;
+      }
+
+      const previousStatus = currentOrder.status;
+
+      await db.beginTransaction();
+
       const result = await db.run(
         `UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
         [status, id]
       );
 
       if (result.changes === 0) {
+        await db.rollback();
         return null;
       }
 
+      // If order is being confirmed (moving to processing status), update product stock
+      if (status === 'processing' && previousStatus === 'pending') {
+        try {
+          // Get order items to update stock
+          const orderItems = await this.getOrderItems(id);
+
+          // Call catalog service to update stock levels
+          const stockUpdateResults = await updateProductStock(orderItems);
+
+          console.log(`Stock update results for order ${id}:`, JSON.stringify(stockUpdateResults));
+
+          // Here you could store the stock update results in a separate table if needed
+        } catch (stockError) {
+          console.error(`Error updating product stock for order ${id}:`, stockError);
+          // Continue processing the order even if stock update fails
+          // You could change this behavior to roll back if stock updates are critical
+        }
+      }
+
+      // If order is being cancelled after processing/shipping/etc., restore product stock
+      if (status === 'cancelled' &&
+        (previousStatus === 'processing' || previousStatus === 'shipped' || previousStatus === 'delivered')) {
+        try {
+          // Get order items to restore stock
+          const orderItems = await this.getOrderItems(id);
+
+          // Call catalog service to restore stock levels
+          const stockRestoreResults = await restoreProductStock(orderItems);
+
+          console.log(`Stock restoration results for cancelled order ${id}:`, JSON.stringify(stockRestoreResults));
+
+        } catch (stockError) {
+          console.error(`Error restoring product stock for cancelled order ${id}:`, stockError);
+          // Continue processing the status change even if stock restoration fails
+          // This ensures order status changes aren't blocked by stock update issues
+        }
+      }
+
+      await db.commit();
       return await this.getOrderById(id);
     } catch (error) {
+      await db.rollback();
       console.error(`Error in updateOrderStatus for ID ${id}:`, error);
       throw error;
     }

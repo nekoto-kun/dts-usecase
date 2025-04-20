@@ -1,5 +1,6 @@
 'use strict';
 
+import { validateProductStock } from './catalog-api.js';
 import OrderModel from './models/order.js';
 import {
   idSchema,
@@ -93,6 +94,19 @@ export default [
     handler: async (request, h) => {
       try {
         const orderData = request.payload;
+
+        // Validate product stock before creating order
+        const stockValidation = await validateProductStock(orderData.items);
+
+        // If there are items with insufficient stock, return an error
+        if (!stockValidation.valid) {
+          return h.response({
+            message: 'Cannot create order: Insufficient stock for some products',
+            insufficientItems: stockValidation.insufficientItems
+          }).code(400);
+        }
+
+        // Proceed with order creation
         const order = await OrderModel.createOrder(orderData);
 
         return h.response({
