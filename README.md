@@ -169,10 +169,19 @@ To deploy this application to Azure Kubernetes Service (AKS), follow these steps
 
 5. **Clean Up Resources**
 
-   When you're done with the demo, delete the AKS cluster to avoid unnecessary charges:
+   When you're done with the demo, you can clean up the resources:
+   
+   Delete the AKS cluster:
    ```powershell
    .\delete-aks-cluster.ps1
    ```
+   
+   Delete the Azure Container Registry:
+   ```powershell
+   .\delete-acr.ps1
+   ```
+   
+   The scripts will prompt for confirmation and display resource details before deletion.
 
 ## Future Enhancements
 
