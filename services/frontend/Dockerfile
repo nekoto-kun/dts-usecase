@@ -24,6 +24,10 @@ COPY --from=build /app/build /usr/share/caddy
 # Copy Caddy configuration
 COPY Caddyfile /etc/caddy/Caddyfile
 
+# Copy runtime configuration script
+COPY config-env.sh /config-env.sh
+RUN chmod +x /config-env.sh
+
 # Expose port
 EXPOSE 80
 EXPOSE 443
@@ -32,4 +36,5 @@ EXPOSE 443
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD wget -qO- http://localhost:80/ || exit 1
 
-# Caddy will start automatically using the provided Caddyfile
+# Use our script as entrypoint
+ENTRYPOINT ["/config-env.sh"]
